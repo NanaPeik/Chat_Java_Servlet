@@ -2,21 +2,23 @@ package ge.tsu.model;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Objects;
 
 public class Message implements Serializable {
 
     private final String name;
     private final String text;
-    private final LocalDateTime time;
+    private final String time;
 
     public Message(String name, String text) {
         this.name = name;
         this.text = text;
-        time = LocalDateTime.now();
+        LocalTime localTime = LocalDateTime.now().toLocalTime();
+        time = localTime.getHour() + ":" + localTime.getMinute() + ":" + localTime.getSecond();
     }
 
-    public Message(String name, String text, LocalDateTime time) {
+    public Message(String name, String text, String time) {
         this.name = name;
         this.text = text;
         this.time = time;
@@ -30,7 +32,7 @@ public class Message implements Serializable {
         return text;
     }
 
-    public LocalDateTime getTime() {
+    public String getTime() {
         return time;
     }
 

@@ -11,4 +11,11 @@
 
     <artifactId>chat-client</artifactId>
 
+    <dependencies>
+        <dependency>
+            <groupId>ge.tsu</groupId>
+            <artifactId>chat-lib</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
 </project>
