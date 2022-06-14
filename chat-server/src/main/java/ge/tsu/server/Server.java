@@ -70,4 +70,16 @@ public class Server implements Runnable {
             }
         }
     }
+
+    public void removeUser(String chatroom, UserThread myself) {
+        List<UserThread> users = chatRooms.get(chatroom);
+        for (UserThread userThread : users) {
+            if (userThread.equals(myself)) {
+                users.remove(userThread);
+                System.out.printf("User: %s leave the chat: %s\n", myself.getName(), chatroom);
+
+                chatRooms.put(chatroom, users);
+            }
+        }
+    }
 }

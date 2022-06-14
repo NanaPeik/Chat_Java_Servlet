@@ -30,19 +30,14 @@ public class UserThread extends Thread {
             InputStream inputStream = socket.getInputStream();
             ObjectInputStream objectInputStream = new ObjectInputStream(inputStream);
             while (true) {
-                if(objectInputStream!=null){
+                if (objectInputStream != null) {
                     var message = (Message) objectInputStream.readObject();
                     if (!message.getText().equals("/exit"))
                         server.broadCast(chatroom, message, this);
                 }
-
             }
-
         } catch (IOException | ClassNotFoundException e) {
-//            throw new RuntimeException(e);
-            server.broadCast(chatroom, new Message("","leave chat"), this);
-
-
+            server.removeUser(chatroom, this);
         }
     }
 
