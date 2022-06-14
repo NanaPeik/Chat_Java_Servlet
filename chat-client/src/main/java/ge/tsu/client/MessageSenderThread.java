@@ -28,7 +28,7 @@ public class MessageSenderThread extends Thread {
                 if (text.trim().equalsIgnoreCase("/exit")) {
                     break;
                 }
-                if (text != "")
+                if (!text.equals(""))
                 {
                     objectOutputStream.writeObject(new Message(client.getName(), text));
                     objectOutputStream.flush();

@@ -1,9 +1,11 @@
 package ge.tsu.model;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Objects;
+import java.util.Properties;
 
 public class Message implements Serializable {
 
@@ -49,8 +51,53 @@ public class Message implements Serializable {
         return Objects.hash(name, text, time);
     }
 
+    private String readColorCode(String colorKey) {
+        String rootFolderPath = null;
+        try (var inputStream = Message.class.getResourceAsStream("/config.properties")) {
+            if (inputStream != null) {
+                // Reading properties
+                var props = new Properties();
+                props.load(inputStream);
+                rootFolderPath = props.getProperty(colorKey, "");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return rootFolderPath;
+    }
+
     @Override
     public String toString() {
-        return String.format("[%s][%s]: %s", time, name, text);
+        String result = null;
+        String suffix = readColorCode("reset");
+        String prefix = getPrefix(text);
+
+        if (prefix != null)
+            result = String.format("[%s][%s]:%s %s%s", time, name, prefix, text, suffix);
+
+        if (result != null) return result;
+        else return String.format("[%s][%s]: %s", time, name, text);
+    }
+
+    public String getPrefix(String message) {
+        String prefix = null;
+        //red, green, yellow, blue, purple, cyan, white
+        //text gets color according this sequence
+        if (text.contains(Color.red.getValue())) {
+            prefix = readColorCode(Color.red.getValue());
+        } else if (text.contains(Color.green.getValue())) {
+            prefix = readColorCode(Color.green.getValue());
+        } else if (text.contains(Color.yellow.getValue())) {
+            prefix = readColorCode(Color.yellow.getValue());
+        } else if (text.contains(Color.blue.getValue())) {
+            prefix = readColorCode(Color.blue.getValue());
+        } else if (text.contains(Color.purple.getValue())) {
+            prefix = readColorCode(Color.purple.getValue());
+        } else if (text.contains(Color.cyan.getValue())) {
+            prefix = readColorCode(Color.cyan.getValue());
+        } else if (text.contains(Color.white.getValue())) {
+            prefix = readColorCode(Color.white.getValue());
+        }
+        return prefix;
     }
 }
