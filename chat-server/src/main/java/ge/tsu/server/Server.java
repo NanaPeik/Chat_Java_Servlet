@@ -1,6 +1,8 @@
 package ge.tsu.server;
 
 import ge.tsu.model.Message;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -13,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 public class Server implements Runnable {
+    private static final Logger log = LoggerFactory.getLogger(Server.class);
 
     private Map<String, List<UserThread>> chatRooms = new HashMap<>();
 
@@ -33,11 +36,11 @@ public class Server implements Runnable {
             if (port == 0) {
                 port = serverSocket.getLocalPort();
             }
-            System.out.printf("Started server which listens on port number: %d\n", port);
+            log.debug("Started server which listens on port number: {}", port);
             while (true) {
-                System.out.println("Waiting for client...");
+                log.info("Waiting for client...");
                 Socket socket = serverSocket.accept();
-                System.out.printf("Got new client: %s:%d\n",
+                log.debug("Got new client: {}:{}",
                         socket.getInetAddress().getHostAddress(), socket.getPort());
 
                 // Read chatroom name
@@ -63,7 +66,7 @@ public class Server implements Runnable {
 
     public void broadCast(String chatroom, Message message, UserThread myself) {
 
-        System.out.printf("Broadcasting line: %s\n", message);
+        log.debug("Broadcasting line: {}", message);
         for (UserThread userThread : chatRooms.get(chatroom)) {
             if (!userThread.equals(myself)) {
                 userThread.sendMessage(message);
@@ -76,7 +79,7 @@ public class Server implements Runnable {
         for (UserThread userThread : users) {
             if (userThread.equals(myself)) {
                 users.remove(userThread);
-                System.out.printf("User: %s leave the chat: %s\n", myself.getName(), chatroom);
+                log.debug("User: {} leave the chat: {}", myself.getName(), chatroom);
 
                 chatRooms.put(chatroom, users);
             }

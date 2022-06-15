@@ -1,11 +1,14 @@
 package ge.tsu.server;
 
 import ge.tsu.model.Message;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.net.Socket;
 
 public class UserThread extends Thread {
+    private static final Logger log = LoggerFactory.getLogger(UserThread.class);
 
     private final String chatroom;
     private final Socket socket;
@@ -38,6 +41,7 @@ public class UserThread extends Thread {
             }
         } catch (IOException | ClassNotFoundException e) {
             server.removeUser(chatroom, this);
+            log.warn(e.getMessage());
         }
     }
 
@@ -46,7 +50,8 @@ public class UserThread extends Thread {
             objectOutputStream.writeObject(message);
             objectOutputStream.flush();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+//            throw new RuntimeException(e);
+            log.error(e.getMessage());
         }
     }
 }
