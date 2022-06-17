@@ -1,5 +1,7 @@
 package ge.tsu.client;
 
+import ge.tsu.model.repository.ClientRepository;
+
 import java.io.IOException;
 import java.io.PrintStream;
 import java.net.Socket;
@@ -10,6 +12,7 @@ public class Client implements Runnable {
     private final String host;
     private final int port;
     private String name;
+    ClientRepository repository = new ClientRepository();
 
     public Client(String host, int port) {
         this.host = host;
@@ -26,6 +29,7 @@ public class Client implements Runnable {
 
             System.out.print("Enter your name: ");
             name = scanner.nextLine();
+            repository.addClient(new ge.tsu.model.Client(name));
 
             Socket clientSocket = new Socket(host, port);
             var outputStream = clientSocket.getOutputStream();
@@ -36,6 +40,8 @@ public class Client implements Runnable {
             new MessageSenderThread(clientSocket, this).start();
         } catch (IOException e) {
             throw new RuntimeException(e);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
