@@ -51,7 +51,7 @@ public class Message implements Serializable {
         return Objects.hash(name, text, time);
     }
 
-    private String readColorCode(String colorKey) {
+    public String readColorCode(String colorKey) throws IOException {
         String rootFolderPath = null;
         try (var inputStream = Message.class.getResourceAsStream("/config.properties")) {
             if (inputStream != null) {
@@ -60,8 +60,8 @@ public class Message implements Serializable {
                 props.load(inputStream);
                 rootFolderPath = props.getProperty(colorKey, "");
             }
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (NullPointerException e) {
+            throw new IOException(e);
         }
         return rootFolderPath;
     }
@@ -69,8 +69,13 @@ public class Message implements Serializable {
     @Override
     public String toString() {
         String result = null;
-        String suffix = readColorCode("reset");
-        String prefix = getPrefix(text);
+        String suffix = null;
+        try {
+            suffix = readColorCode("reset");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        String prefix = getPrefix();
 
         if (prefix != null)
             result = String.format("[%s][%s]:%s %s%s", time, name, prefix, text, suffix);
@@ -79,24 +84,28 @@ public class Message implements Serializable {
         else return String.format("[%s][%s]: %s", time, name, text);
     }
 
-    public String getPrefix(String message) {
+    public String getPrefix() {
         String prefix = null;
         //red, green, yellow, blue, purple, cyan, white
         //text gets color according this sequence
-        if (text.contains(Color.red.getValue())) {
-            prefix = readColorCode(Color.red.getValue());
-        } else if (text.contains(Color.green.getValue())) {
-            prefix = readColorCode(Color.green.getValue());
-        } else if (text.contains(Color.yellow.getValue())) {
-            prefix = readColorCode(Color.yellow.getValue());
-        } else if (text.contains(Color.blue.getValue())) {
-            prefix = readColorCode(Color.blue.getValue());
-        } else if (text.contains(Color.purple.getValue())) {
-            prefix = readColorCode(Color.purple.getValue());
-        } else if (text.contains(Color.cyan.getValue())) {
-            prefix = readColorCode(Color.cyan.getValue());
-        } else if (text.contains(Color.white.getValue())) {
-            prefix = readColorCode(Color.white.getValue());
+        try {
+            if (text.contains(Color.red.getValue())) {
+                prefix = readColorCode(Color.red.getValue());
+            } else if (text.contains(Color.green.getValue())) {
+                prefix = readColorCode(Color.green.getValue());
+            } else if (text.contains(Color.yellow.getValue())) {
+                prefix = readColorCode(Color.yellow.getValue());
+            } else if (text.contains(Color.blue.getValue())) {
+                prefix = readColorCode(Color.blue.getValue());
+            } else if (text.contains(Color.purple.getValue())) {
+                prefix = readColorCode(Color.purple.getValue());
+            } else if (text.contains(Color.cyan.getValue())) {
+                prefix = readColorCode(Color.cyan.getValue());
+            } else if (text.contains(Color.white.getValue())) {
+                prefix = readColorCode(Color.white.getValue());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
         return prefix;
     }

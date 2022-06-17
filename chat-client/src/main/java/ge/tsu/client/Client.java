@@ -10,7 +10,6 @@ public class Client implements Runnable {
     private final String host;
     private final int port;
     private String name;
-    private String chatroom;
 
     public Client(String host, int port) {
         this.host = host;
@@ -23,7 +22,7 @@ public class Client implements Runnable {
 
             Scanner scanner = new Scanner(System.in);
             System.out.print("Enter chatroom name: ");
-            chatroom = scanner.nextLine();
+            String chatroom = scanner.nextLine();
 
             System.out.print("Enter your name: ");
             name = scanner.nextLine();
